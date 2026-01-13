@@ -2,6 +2,7 @@ package com.example.cameraapp
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Toast
@@ -51,7 +52,16 @@ class MainActivity : ComponentActivity() {
  */
 @Composable
 fun CameraApp(modifier: Modifier = Modifier) {
-    var hasPermission by remember { mutableStateOf(false) }
+    // Obtenemos el contexto actual
+    val context = LocalContext.current
+
+    // Inicializamos el estado comprobando si ya tenemos el permiso
+    var hasPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
 
     // Lanzador de permiso de cámara
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -67,9 +77,7 @@ fun CameraApp(modifier: Modifier = Modifier) {
     } else {
         // Si no hay permiso, mostramos mensaje y botón para solicitarlo
         Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier = modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
